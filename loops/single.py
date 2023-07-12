@@ -126,7 +126,7 @@ def single_loop(config):
             no_texture = texture.create_trainable(np.random.uniform(size=[config["texture_res"], config["texture_res"]] + [3], low=0.85, high=1.0), [config["texture_res"], config["texture_res"]], auto_mipmaps=True)
 
         if config["blur"] is True:
-            sigma = torch.tensor(config["blur_sigma"]).unsqueeze(0).repeat(config["batch_size"], 1)
+            sigma = torch.tensor(config["blur_sigma"]).unsqueeze(0).repeat(kd_map_opt.data.shape[0], 1)
             
             # low pass filter for textures
             ready_texture = texture.Texture2D(
