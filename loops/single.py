@@ -131,7 +131,7 @@ def single_loop(config):
                 kornia.filters.gaussian_blur2d(
                     kd_map_opt.data.permute(0, 3, 1, 2),
                     kernel_size=config["kernel_size"],
-                    sigma=config["blur_sigma"],
+                    sigma=torch.tensor(config["blur_sigma"]),
                 ).permute(0, 2, 3, 1).contiguous()
             )
 
@@ -139,14 +139,14 @@ def single_loop(config):
                 kornia.filters.gaussian_blur2d(
                     normal_map_opt.data.permute(0, 3, 1, 2),
                     kernel_size=config["kernel_size"],
-                    sigma=config["blur_sigma"],
+                    sigma=torch.tensor(config["blur_sigma"]),
                 ).permute(0, 2, 3, 1).contiguous()
             )
 
             ready_displ = kornia.filters.gaussian_blur2d(
               ds_map_opt.unsqueeze(0).permute(0, 3, 1, 2),
               kernel_size=config["kernel_size"],
-              sigma=config["blur_sigma"],
+              sigma=torch.tensor(config["blur_sigma"]),
             ).permute(0, 2, 3, 1).contiguous().squeeze(0)
 
             ready_mesh = mesh.Mesh(
