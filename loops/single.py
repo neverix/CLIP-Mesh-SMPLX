@@ -126,12 +126,14 @@ def single_loop(config):
             no_texture = texture.create_trainable(np.random.uniform(size=[config["texture_res"], config["texture_res"]] + [3], low=0.85, high=1.0), [config["texture_res"], config["texture_res"]], auto_mipmaps=True)
 
         if config["blur"] is True:
+            sigma = torch.tensor(config["blur_sigma"]).unsqueeze(0).repeat(config["batch_size"], 1)
+            
             # low pass filter for textures
             ready_texture = texture.Texture2D(
                 kornia.filters.gaussian_blur2d(
                     kd_map_opt.data.permute(0, 3, 1, 2),
                     kernel_size=config["kernel_size"],
-                    sigma=torch.tensor(config["blur_sigma"]),
+                    sigma=sigma,
                 ).permute(0, 2, 3, 1).contiguous()
             )
 
@@ -139,14 +141,14 @@ def single_loop(config):
                 kornia.filters.gaussian_blur2d(
                     normal_map_opt.data.permute(0, 3, 1, 2),
                     kernel_size=config["kernel_size"],
-                    sigma=torch.tensor(config["blur_sigma"]),
+                    sigma=sigma,
                 ).permute(0, 2, 3, 1).contiguous()
             )
 
             ready_displ = kornia.filters.gaussian_blur2d(
               ds_map_opt.unsqueeze(0).permute(0, 3, 1, 2),
               kernel_size=config["kernel_size"],
-              sigma=torch.tensor(config["blur_sigma"]),
+              sigma=sigma,
             ).permute(0, 2, 3, 1).contiguous().squeeze(0)
 
             ready_mesh = mesh.Mesh(
